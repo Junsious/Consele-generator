@@ -1,39 +1,63 @@
 #include <iostream>
-#include <algorithm>
-#include <conio.h> // Äëÿ èñïîëüçîâàíèÿ _getch()
+#include <conio.h>
+#include <windows.h>
+
+
+constexpr int width = 40; // Удвоенная ширина поля
+constexpr int height = 20; // Удвоенная высота поля
+
+void drawPaddle(int x, int y) {
+    // Позиционируемся в нужное место в консоли
+    for (int i = 0; i < 4; i++) {
+        std::cout << "\033[" << y + i << ";" << x << "H";
+        std::cout << "|";
+    }
+}
+void drawSecondPaddle(int x, int y) {
+    for (int i = 0; i < 4; i++) {
+        std::cout << "\033[" << y + i << ";" << x << "H";
+        std::cout << "|";
+    }
+}
+void drawBall(int x, int y) {
+    std::cout << "\033[" << y << ";" << x << "H";
+    std::cout << "o";
+}
+
+void drawField() {
+    // Рисуем верхнюю границу поля
+    for (int i = 0; i <= width + 1; i++)
+        std::cout << "#";
+    std::cout << std::endl;
+
+    // Рисуем поле
+    for (int i = 1; i <= height; i++) {
+        std::cout << "|";
+        for (int j = 1; j <= width; j++) {
+            std::cout << " ";
+        }
+        std::cout << "|" << std::endl;
+    }
+
+    // Рисуем нижнюю границу поля
+    for (int i = 0; i <= width + 1; i++)
+        std::cout << "#";
+}
 
 int main() {
-    std::string input;
-    int numbers[4];
+    // Очистим консоль перед началом рисования
+    system("cls");
 
-    // Request a string of 4 digits without spaces from the user
-    std::cout << "Enter 4 single-digit numbers without spaces:\n";
-    std::cin >> input;
+    // Скрываем заголовок консоли
+    SetConsoleTitle(NULL);
 
-    // Validate the input and convert it to integer array
-    if (input.length() != 4) {
-        std::cout << "Invalid input. Please enter exactly 4 digits.\n";
-        return 1;
-    }
-    for (int i = 0; i < 4; i++) {
-        numbers[i] = input[i] - '0';
-        if (numbers[i] < 1 || numbers[i] > 9) {
-            std::cout << "Number must be from 1 to 9. Please try again.\n";
-            return 1;
-        }
-    }
-
-    // Create and display all number combinations
-    do {
-        for (int i = 0; i < 4; i++) {
-            std::cout << numbers[i] << " ";
-        }
-        std::cout << std::endl;
-    } while (std::next_permutation(numbers, numbers + 4));
-
-    // Wait for a key press before exiting
-    std::cout << "Press any key to exit...\n";
-    _getch();
+    // Рисуем поле, ракетку и мяч
+    drawField();
+    drawPaddle(5, 5);
+    drawBall(10, 10);
+    drawSecondPaddle(width - 5, 5);
+    // Ожидание нажатия клавиши перед закрытием
+    std::cin.get();
 
     return 0;
 }
